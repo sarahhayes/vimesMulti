@@ -1,5 +1,39 @@
 
 
+#' Estimate cut-off values for different transmission types
+#'
+#' @param d_type The distance type  - one of either temporal or spatial
+#' @param distrib The distribution to be used for estimation. For d_type = temporal, can be lognormal or gamma. For d_type = spatial, is Rayleigh
+#' @param obs Number of observations in each group. Should be entered as a vector of length 2 (group 1 obs, group 2 obs)
+#' @param rr Reporting probabilities for each group. Should be entered as a vector of length 2 (group 1 reporting probability, group 2 reporting probability)
+#' @param n Number of individuals to include in simulation. Recommend >1,000,000
+#' @param params The summary statistics for the distance type specified in d_type. Entered as a vector of length 6. For d_type = spatial it will be (mean for g1-g1 transmission, std for g1_g1 transmission, mean for mixed transmission, std for mixed transmission, mean for g2-g2 transmission, std for g2-g2 transmission)
+#' @param q The centile to use for the cut-off e.g 0.95 for 95th centile.
+#' @param assort_mix The level of assortative mixing where 1 represents random mixing.
+#'
+#' @return A dataframe containing the cut-off values for each type of transmission and the proportion of each type of transmission that were "observed" in the simulation
+#' @export
+#' @importFrom stats quantile rbeta rgamma rlnorm rnorm runif
+#'
+#' @examples
+#' g1_obs <- 300
+#' g2_obs <- 200
+#' g1_rr <- 0.75
+#' g2_rr <- 0.50
+#' n = 10000000
+#' q <- 0.95
+#' si_mean <- 27.8
+#' si_sd <- 36.8
+#' params_temporal <- c(si_mean, si_sd, si_mean, si_sd, si_mean, si_sd)
+#' assort_mix <- 1
+#'
+#' get_quantiles_multi(d_type = "temporal", distrib = "lognormal",
+#'                     obs = c(g1_obs, g2_obs), rr = c(g1_rr, g2_rr),
+#'                     params = params_temporal,
+#'                     n = n, q = q, assort_mix = assort_mix)
+
+
+
 get_quantiles_multi <- function(d_type, distrib, obs, rr, n,
                                 params, q, assort_mix) {
 
