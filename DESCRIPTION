@@ -14,7 +14,10 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Imports: 
     epitrix,
-    stats
+    stats,
+    vimes,
+    igraph,
+    fields
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
