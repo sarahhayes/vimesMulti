@@ -28,6 +28,10 @@ set_cutoff <- function(d_type, g1g1_threshold, mixed_threshold, g2g2_threshold){
     df[,"threshold_spatial"] <- c(g1g1_threshold, mixed_threshold, g2g2_threshold)
     df[,"proportion_sim_spatial"] <- NA
   }
+  if(d_type != "spatial"|"temporal"){
+    msg_error <- "unsupported value for d_type"
+    stop(msg_error)
+  }
 
   return(df)
 }
