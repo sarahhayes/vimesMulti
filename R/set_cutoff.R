@@ -16,6 +16,11 @@
 
 set_cutoff <- function(d_type, g1g1_threshold, mixed_threshold, g2g2_threshold){
   df <- as.data.frame(matrix(ncol = 3, nrow = 3))
+  if(d_type != "temporal" & d_type != "spatial"){
+    msg_error <- "unsupported value for d_type"
+    stop(msg_error)
+  }
+
   if(d_type == "temporal"){
     colnames(df) <- c("trans_type", "threshold_temporal", "proportion_sim_temporal")
     df[,"trans_type"] <- c("g1g1", "mixed", "g2g2")
@@ -27,10 +32,6 @@ set_cutoff <- function(d_type, g1g1_threshold, mixed_threshold, g2g2_threshold){
     df[,"trans_type"] <- c("g1g1", "mixed", "g2g2")
     df[,"threshold_spatial"] <- c(g1g1_threshold, mixed_threshold, g2g2_threshold)
     df[,"proportion_sim_spatial"] <- NA
-  }
-  if(d_type != "spatial"|"temporal"){
-    msg_error <- "unsupported value for d_type"
-    stop(msg_error)
   }
 
   return(df)

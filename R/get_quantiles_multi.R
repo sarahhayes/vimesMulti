@@ -10,7 +10,7 @@
 #' @param params The summary statistics for the distance type specified in d_type. Entered as a vector of length 6. For d_type = spatial it will be (mean for g1-g1 transmission, std for g1_g1 transmission, mean for mixed transmission, std for mixed transmission, mean for g2-g2 transmission, std for g2-g2 transmission)
 #' @param q The centile to use for the cut-off e.g 0.95 for 95th centile.
 #' @param assort_mix The level of assortative mixing where 1 represents random mixing.
-#'
+#' @param prop_tpye The transmission proportions to extract from the simulation. Options are "all" (default) in which the proportions from the whole simulation are extracted and "centile" in which only the transmissions below the centile cut off value are used to extract the proportions of each transmission type
 #' @return A dataframe containing the cut-off values for each type of transmission and the proportion of each type of transmission that were "observed" in the simulation
 #' @export
 #' @importFrom stats quantile rbeta rgamma rlnorm rnorm runif
@@ -30,12 +30,12 @@
 #' get_quantiles_multi(d_type = "temporal", distrib = "lognormal",
 #'                     obs = c(g1_obs, g2_obs), rr = c(g1_rr, g2_rr),
 #'                     params = params_temporal,
-#'                     n = n, q = q, assort_mix = assort_mix)
+#'                     n = n, q = q, assort_mix = assort_mix, prop_type = "all" )
 
 
 
 get_quantiles_multi <- function(d_type, distrib, obs, rr, n,
-                                params, q, assort_mix) {
+                                params, q, assort_mix, prop_type = "all") {
 
  ## Calculate the actual number of cases for each species
   g1_n <- obs[1]/rr[1]
@@ -238,14 +238,24 @@ get_quantiles_multi <- function(d_type, distrib, obs, rr, n,
     colnames(res) <- c("trans_type", "threshold_temporal", "proportion_sim_temporal")
     res[,"trans_type"] <- c("g1g1","mixed","g2g2")
     res[,"threshold_temporal"] <- c(threshold_g1g1, threshold_g1g2, threshold_g2g2)
-    res[,"proportion_sim_temporal"] <- c(prop_g1g1_below_quant, prop_g1g2_below_quant, prop_g2g2_below_quant)
+    if(prop_type == "all"){
+      res[,"proportion_sim_temporal"] <- c(prop_g1g1, prop_g1g2, prop_g2g2)
+    }
+    if(prop_type == "centile") {
+      res[,"proportion_sim_temporal"] <- c(prop_g1g1_below_quant, prop_g1g2_below_quant, prop_g2g2_below_quant)
+    }
   }
 
   if(d_type == "spatial"){
     colnames(res) <- c("trans_type", "threshold_spatial", "proportion_sim_spatial")
     res[,"trans_type"] <- c("g1g1","mixed","g2g2")
     res[,"threshold_spatial"] <- c(threshold_g1g1, threshold_g1g2, threshold_g2g2)
-    res[,"proportion_sim_spatial"] <- c(prop_g1g1_below_quant, prop_g1g2_below_quant, prop_g2g2_below_quant)
+    if(prop_type == "all"){
+      res[,"proportion_sim_spatial"] <- c(prop_g1g1, prop_g1g2, prop_g2g2)
+    }
+    if(prop_type == "centile") {
+      res[,"proportion_sim_spatial"] <- c(prop_g1g1_below_quant, prop_g1g2_below_quant, prop_g2g2_below_quant)
+    }
   }
 
   return(res)

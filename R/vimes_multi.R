@@ -56,7 +56,7 @@ vimes_multi <- function(dat_time, dat_geo1, dat_geo2,
                         graph_opt = vimes_graph_opt(), ...){
 
   time_dist <- dist(dat_time)
-  dat_dist <- as.matrix(c(dat_geo1, dat_geo2))
+  dat_dist <- as.matrix(cbind(dat_geo1, dat_geo2))
   dat_dist <- fields::rdist(dat_dist)/1000 # convert to km
 
   dat_x <- list(time_dist, dat_dist)
