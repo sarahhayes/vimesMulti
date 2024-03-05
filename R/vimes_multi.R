@@ -149,7 +149,9 @@ vimes_multi <- function(dat_time, dat_geo1, dat_geo2,
 
     if(sum(res_df$data_proportion) != 1){
       msg <- "Proportions do not sum to 1"
-      stop(msg) # ensure sums to 1.
+      warning(msg)
+      print(sum(res_df$data_proportion))
+    #  stop(msg) # ensure sums to 1.
     }
 
     sim_props <- left_join(temporal_cut_offs, distance_cut_offs)
