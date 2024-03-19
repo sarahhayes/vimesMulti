@@ -158,6 +158,8 @@ for (i in 1:length(assort_vect)) {
 chisq_vals_gamma <- c()
 prop_succesful_gamma <- c()
 min_chisq_gamma <- c()
+mean_chisq_gamma <- c()
+
 
 tictoc::tic()
 for (k in 1:length(assort_vect)) {
@@ -176,12 +178,14 @@ for (k in 1:length(assort_vect)) {
   }
   prop_succesful_gamma[k] <- length(which(chisq_vals_gamma < 3.841))/b
   min_chisq_gamma[k] <- min(chisq_vals_gamma)
+  mean_chisq_gamma[k] <- mean(chisq_vals_gamma)
 }
 tictoc::toc()
 
-prop_results_gamma <- cbind(assort_vect, prop_succesful_gamma, min_chisq_gamma)
+prop_results_gamma <- cbind(assort_vect, prop_succesful_gamma, min_chisq_gamma, mean_chisq_gamma)
 prop_results_gamma <- as.data.frame(prop_results_gamma)
 
 
 #write.csv(prop_results_gamma, "for_paper/bootstrap_100_scenario_3_gamma.csv", row.names = F)
+#write.csv(prop_results_gamma, "for_paper/bootstrap_100_scenario_3_gamma_with_mean.csv", row.names = F)
 

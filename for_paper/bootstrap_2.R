@@ -21,6 +21,7 @@ params_temporal <- c(si_mean, si_sd, si_mean, si_sd, si_mean, si_sd)
 # number of values that we want to check
 # n_grid <- 91
 assort_vect <- seq(1,5,0.1)
+#assort_vect <- seq(1.5, 4.5, 0.1) # for extracting means after initial runs
 #assort_vect <- c(1, 2.4)
 #assort_vect <- 2
 
@@ -106,6 +107,7 @@ for (i in 1:b) {
 chisq_vals <- c()
 prop_succesful <- c()
 min_chisq <- c()
+mean_chisq <- c()
 
 tictoc::tic()
 for (k in 1:length(assort_vect)) {
@@ -124,13 +126,15 @@ for (k in 1:length(assort_vect)) {
   }
   prop_succesful[k] <- length(which(chisq_vals < 3.841))/b
   min_chisq[k] <- min(chisq_vals)
+  mean_chisq[k] <- mean(chisq_vals)
 }
 tictoc::toc()
 
-prop_results <- cbind(assort_vect, prop_succesful, min_chisq)
+prop_results <- cbind(assort_vect, prop_succesful, min_chisq, mean_chisq)
 prop_results <- as.data.frame(prop_results)
 
 #write.csv(prop_results, "for_paper/bootstrap_100_scenario_2_rayleigh.csv")
+#write.csv(prop_results, "for_paper/bootstrap_100_scenario_2_rayleigh_with_mean.csv")
 
 
 ######################################################
@@ -160,6 +164,7 @@ for (i in 1:length(assort_vect)) {
 chisq_vals_gamma <- c()
 prop_succesful_gamma <- c()
 min_chisq_gamma <- c()
+mean_chisq_gamma <- c()
 
 tictoc::tic()
 for (k in 1:length(assort_vect)) {
@@ -178,11 +183,13 @@ for (k in 1:length(assort_vect)) {
   }
   prop_succesful_gamma[k] <- length(which(chisq_vals_gamma < 3.841))/b
   min_chisq_gamma[k] <- min(chisq_vals_gamma)
+  mean_chisq_gamma[k] <- mean(chisq_vals_gamma)
 }
 tictoc::toc()
 
-prop_results_gamma <- cbind(assort_vect, prop_succesful_gamma, min_chisq_gamma)
+prop_results_gamma <- cbind(assort_vect, prop_succesful_gamma, min_chisq_gamma, mean_chisq_gamma)
 prop_results_gamma <- as.data.frame(prop_results_gamma)
 
 
 #write.csv(prop_results_gamma, "for_paper/bootstrap_100_scenario_2_gamma.csv")
+#write.csv(prop_results_gamma, "for_paper/bootstrap_100_scenario_2_gamma_with_mean.csv")

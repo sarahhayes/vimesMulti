@@ -26,7 +26,7 @@ dist_mean <- 0.87
 params_spatial <- c(dist_mean, NA, dist_mean, NA,  dist_mean, NA)
 
 set.seed(1234)
-cuts_spatial <- get_quantiles_multi(d_type = "spatial",
+cuts_spatial <- get_quantiles_multi(d_type = "spatial",distrib = "rayleigh",
                                     obs = c(g1_obs, g2_obs), rr = c(g1_rr, g2_rr),
                                     params = params_spatial,
                                     n = n, q = q, assort_mix = assort_mix)

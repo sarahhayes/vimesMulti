@@ -105,6 +105,7 @@ for (i in 1:b) {
 chisq_vals <- c()
 prop_succesful <- c()
 min_chisq <- c()
+mean_chisq <- c()
 
 tictoc::tic()
 for (k in 1:length(assort_vect)) {
@@ -123,13 +124,16 @@ for (k in 1:length(assort_vect)) {
   }
   prop_succesful[k] <- length(which(chisq_vals < 3.841))/b
   min_chisq[k] <- min(chisq_vals)
+  mean_chisq[k] <- mean(chisq_vals)
 }
 tictoc::toc()
 
-prop_results <- cbind(assort_vect, prop_succesful, min_chisq)
+prop_results <- cbind(assort_vect, prop_succesful, min_chisq, mean_chisq)
 prop_results <- as.data.frame(prop_results)
 
 # write.csv(prop_results, "for_paper/bootstrap_100_scenario_7_rayleigh.csv", row.names = F)
+# write.csv(prop_results, "for_paper/bootstrap_100_scenario_7_rayleigh_with_mean.csv", row.names = F)
+
 
 ######################################################
 #### Now repeat for the gamma distribution
