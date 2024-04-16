@@ -40,7 +40,7 @@
 
 
 vimes_prune_multi <-   function(x, cutoff = NULL, group_vect,
-                                graph_opt = vimes_graph_opt(),...){
+                                graph_opt = vimes::vimes_graph_opt(),...){
 
   ## CHECKS ##
   if (is.null(x)) {
@@ -77,11 +77,11 @@ vimes_prune_multi <-   function(x, cutoff = NULL, group_vect,
 
   new_x <- 1 - (as.matrix(x) > cuts_mat)
 
-  g <- graph.adjacency(new_x, mode = "undirected",
+  g <- igraph::graph.adjacency(new_x, mode = "undirected",
                                weighted = TRUE, diag = FALSE)
 
   ## find clusters ##
-  groups <- clusters(g)
+  groups <- igraph::clusters(g)
   names(groups) <- c("membership", "size", "K")
 
   ## add cluster colors

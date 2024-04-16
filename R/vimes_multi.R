@@ -53,7 +53,7 @@
 vimes_multi <- function(dat_time, dat_geo1, dat_geo2,
                         temporal_cut_offs = NULL, distance_cut_offs = NULL,
                         group_vect = group_vect,
-                        graph_opt = vimes_graph_opt(), ...){
+                        graph_opt = vimes::vimes_graph_opt(), ...){
 
   time_dist <- dist(dat_time)
   dat_dist <- as.matrix(cbind(dat_geo1, dat_geo2))
@@ -82,7 +82,7 @@ vimes_multi <- function(dat_time, dat_geo1, dat_geo2,
     all_graphs[[i]] <- vimes_prune_multi(x[[i]],
                                          cutoff = cutoff[[i]],
                                          group_vect = group_vect,
-                                         graph_opt = vimes_graph_opt())
+                                         graph_opt = vimes::vimes_graph_opt())
   }
 
 
@@ -145,7 +145,7 @@ vimes_multi <- function(dat_time, dat_geo1, dat_geo2,
       table() %>%
       as.data.frame() %>%
       magrittr::set_names(c("trans_type", "data_count")) %>%
-      mutate(data_proportion = data_count/sum(data_count))
+      dplyr::mutate(data_proportion = data_count/sum(data_count))
 
     if(sum(res_df$data_proportion) != 1){
       msg <- "Proportions do not sum to 1"
@@ -154,7 +154,7 @@ vimes_multi <- function(dat_time, dat_geo1, dat_geo2,
     #  stop(msg) # ensure sums to 1.
     }
 
-    sim_props <- left_join(temporal_cut_offs, distance_cut_offs)
+    sim_props <- dplyr::left_join(temporal_cut_offs, distance_cut_offs)
 
     sim_props[,"sim_proportion"] <- rowMeans(sim_props[,c("proportion_sim_temporal", "proportion_sim_spatial")])
     sum(sim_props$sim_proportion)
@@ -162,7 +162,7 @@ vimes_multi <- function(dat_time, dat_geo1, dat_geo2,
     ## make a dataframe combining the simulation proportions and results using the data.
     combined_results <- sim_props %>%
       dplyr::select(trans_type, sim_proportion) %>%
-      left_join(res_df)  %>%
+      dplyr::left_join(res_df)  %>%
       dplyr::mutate(sim_count = round(sim_proportion*sum(data_count)))
 
 
@@ -183,7 +183,7 @@ vimes_multi <- function(dat_time, dat_geo1, dat_geo2,
     cluster_group <- no_single %>%
     dplyr::select(group_vect, cluster_no)
     cluster_group <- as.data.frame(t(table(cluster_group)))
-    cluster_group <- pivot_wider(cluster_group, names_from = "group_vect", values_from = Freq)
+    cluster_group <- tidyr::pivot_wider(cluster_group, names_from = "group_vect", values_from = Freq)
     cluster_group[,"total"] <- rowSums(cluster_group[,c(-1)]) # sum all but the first column
     if(sum(cluster_group[,"total"]) != nrow(no_single)) {print("Warning - numbers in clusters don't match expected numbers")}  # check matches the number we are expecting.
 
