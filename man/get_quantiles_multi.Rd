@@ -19,7 +19,7 @@ get_quantiles_multi(
 \arguments{
 \item{d_type}{The distance type  - one of either temporal or spatial}
 
-\item{distrib}{The distribution to be used for estimation. For d_type = temporal, can be lognormal or gamma. For d_type = spatial, is Rayleigh}
+\item{distrib}{The distribution to be used for estimation. For d_type = temporal, can be lognormal or gamma. For d_type = spatial, can be Rayleigh or gamma}
 
 \item{obs}{Number of observations in each group. Should be entered as a vector of length 2 (group 1 obs, group 2 obs)}
 
@@ -33,7 +33,7 @@ get_quantiles_multi(
 
 \item{assort_mix}{The level of assortative mixing where 1 represents random mixing.}
 
-\item{prop_tpye}{The transmission proportions to extract from the simulation. Options are "all" (default) in which the proportions from the whole simulation are extracted and "centile" in which only the transmissions below the centile cut off value are used to extract the proportions of each transmission type}
+\item{prop_type}{The transmission proportions to extract from the simulation. Options are "all" (default) in which the proportions from the whole simulation are extracted and "centile" in which only the transmissions below the centile cut off value are used to extract the proportions of each transmission type}
 }
 \value{
 A dataframe containing the cut-off values for each type of transmission and the proportion of each type of transmission that were "observed" in the simulation
@@ -56,5 +56,5 @@ assort_mix <- 1
 get_quantiles_multi(d_type = "temporal", distrib = "lognormal",
                     obs = c(g1_obs, g2_obs), rr = c(g1_rr, g2_rr),
                     params = params_temporal,
-                    n = n, q = q, assort_mix = assort_mix, prop_type = )
+                    n = n, q = q, assort_mix = assort_mix, prop_type = "all" )
 }
