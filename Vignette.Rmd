@@ -1,0 +1,326 @@
+---
+title: "vimesMulti vignette"
+author: "Sarah Hayes"
+date: "2024-06-21"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message  = FALSE)
+```
+
+## vimesMulti
+
+vimesMulti is a package for detecting disease outbreak clusters from temporal and spatial suveillance data using group-specific epidemiological parameters.
+There are four basic functions within the package. 
+This vignette illustrates a basic workflow.
+
+Load the package
+
+```{r load package, message = FALSE, warning= FALSE}
+
+# This will change when package is hosted somewhere else
+
+library(devtools)
+load_all()
+library(ggplot2)
+
+```
+
+The cluster detection method relies on cut-off values for pruning the graphs (for full details see....)
+These cut-off values are crucial in determining the size and composition of clusters. 
+
+*get_quantiles_multi* uses a simulation-based approach to generate these cut-off values using user-defined values for the number of cases in each group and user-specified values for epidemiological parameters. 
+
+The user enters:
+
+* Number of observed cases in group 1 (g1_obs) and group 2 (g2_obs).
+
+* Reporting probability for group 1 (g1_rr) and group 2 (g2_rr). 
+
+* Number of individuals to include in the simulation (n). It is recommended to use at least 1 million and to use              higher numbers if reporting probabilities are very low. 
+
+* Percentile cut-off value (q).  
+
+* Data type (d_type) which will be one of 'spatial' or 'temporal'
+
+* Distribution (distrib). This can be either 'gamma' or 'lognormal' for temporal data and 'gamma' or 'rayleigh' for spatial data.
+
+* The summary statistics (mean and standard deviation) for the data. These may be the same for all transmission types or may vary by transmission types. 
+
+* Parameter vector (params_temporal). In this vector, the summary statistics for each of the transmission types are assigned in the order of: transmission between members of group 1 (g1-g1), transmission between groups 1 and 2 (g1-g2 or g2-g1), transmission between members of group 2 (g2-g2).In the example below,  
+
+* Assortativity parameter (assort_mix). This parameter assigns the degree of assortative mixing between groups. At 1, this assumes random mixing. As it increases, the level of assortative mixing increases. 
+
+Example of generating cut-off values for temporal data using the lognormal distribution
+
+```{r using get_quantiles_multi for temporal}
+
+g1_obs <- 30
+g2_obs <- 20
+g1_rr <- 0.75
+g2_rr <- 0.50
+n = 10000000
+q <- 0.95
+si_mean <- 27.8
+si_sd <- 36.8
+params_temporal <- c(si_mean, si_sd, si_mean, si_sd, si_mean*2, si_sd*2)
+assort_mix <- 1
+
+temporal_cut_off <- get_quantiles_multi(d_type = "temporal", distrib = "lognormal",
+                     obs = c(g1_obs, g2_obs), rr = c(g1_rr, g2_rr),
+                     params = params_temporal,
+                     n = n, q = q, assort_mix = assort_mix)
+
+```
+
+
+Example of generating cut-off values for spatial data using the Rayleigh distribution. 
+The Rayleigh distribution is a one-parameter distribution and so only the mean of the transmission distance is entered and NA entered for the standard distribution
+
+
+```{r using get_quantiles_multi for spatial data}
+
+
+dist_mean <- 0.87
+params_spatial <- c(dist_mean, NA, dist_mean, NA,  dist_mean, NA)
+
+
+spatial_cut_off <- get_quantiles_multi(d_type = "spatial", distrib = "rayleigh",
+                                                obs = c(g1_obs, g2_obs), rr = c(g1_rr, g2_rr),
+                                                params = params_spatial,
+                                                n = n, q = q, assort_mix = assort_mix)
+
+
+spatial_cut_off
+
+
+
+```
+
+
+Alternatively, if the user already has the values they wish to use for the cut-off values, they can be manually specified using "set_cut_off". 
+
+** Perhaps remove the proportion_sim_spatial part of the table in the function?? 
+
+```{r using set cut_off}
+
+manual_spatial_cut_off <- set_cutoff("spatial", 2,3,2)
+manual_spatial_cut_off
+
+```
+
+
+The cut-off values that have been generated for each transmission type can now be used for cluster detection. 
+
+Generate some example data
+
+```{r generate some data}
+
+dat_times <- c(1855, 1196, 711, 777, 780, 1332, 740, 1251, 1234, 804, 1789, 222, 345, 314, 465, 209, 253, 656,
+                1621, 455, 439, 439, 1414, 253, 896, 921, 410, 537, 954, 896, 980, 642, 119, 412, 413, 401, 401,
+                399, 398, 395, 398, 1321, 944, 709, 776, 769, 1067, 1261, 1534, 330)
+
+dat_geo1 <- c(623626.8, 627471.6, 625338.6, 631570.6, 629642.1, 629805.5, 626784.1, 618404.2,
+                            617202.1, 591642.1, 600856.2, 590948.1, 576259.7, 576802.9, 578319.8, 585333.7,
+                            585286.0, 604260.9, 612423.8, 607130.3, 607068.2, 603192.5, 583602.8, 577951.7,
+                            604808.5, 604798.9, 603662.1, 592264.8, 586373.1, 580764.4, 586428.5, 585508.1,
+                            585520.0, 584640.1, 584640.1, 584640.1, 584640.1, 584640.1, 584640.1, 585215.0,
+                            584640.1, 631706.5, 631875.6, 629265.6, 629382.1, 628769.7, 629680.1, 644871.1,
+                            644841.1, 640511.1)
+
+dat_geo2 <- c(8850794, 8864207, 8861898, 8862102, 8854782, 8864586, 8853986, 8858298, 8855642,
+                             8860179, 8866007, 8860162, 8852528, 8853027, 8855598, 8855781, 8855480, 8868075,
+                             8854970, 8848923, 8849040, 8843570, 8853303, 8847845, 8845847, 8845835, 8843812,
+                             8840340, 8838607, 8833568, 8838656, 8842167, 8842038, 8841850, 8841850, 8841850,
+                             8841850, 8841850, 8841850, 8842443, 8841850, 8849402, 8849364, 8851496, 8850060,
+                             8849636, 8847645, 8842940, 8842928, 8850822)
+
+# Also need a vector specifying the group for each data entry
+set.seed(26)
+group_vect <- sample(c(rep("g1", 30), rep("g2", 20)))
+
+```
+
+
+Use the vimes_multi function to generate the clusters
+
+
+```{r generate the clusters using cut-off values from get_quantiles_multi}
+
+ vimes_multi_results <- vimes_multi(
+    dat_time = dat_times,
+    dat_geo1 = dat_geo1,
+    dat_geo2 = dat_geo2,
+    temporal_cut_offs = temporal_cut_off,
+    distance_cut_offs = spatial_cut_off,
+    group_vect = group_vect,
+    graph_opt = vimes::vimes_graph_opt())
+```
+
+Summary table showing the number and proportion of each transmission type from the data clusters and from the original simulation
+
+```{r review summary table}
+
+vimes_multi_results$combined_results
+
+```
+
+Summary table of size and composition of clusters of two or more. 
+
+```{r produce summary}
+
+vimes_multi_results$cluster_size_df
+
+```
+
+Histogram to show the cluster sizes
+
+```{r histogram of results}
+
+hist(vimes_multi_results$vimes_results_list$clusters$size, col = "pink", xlab = "Size of cluster",
+     breaks = seq(-1,10,1),
+     main = "Histogram of cluster sizes")
+
+```
+
+Plot coloured by cluster composition
+
+
+```{r plot coloured by compositio}
+
+#extract the cluster details
+cluster_counts <- vimes_multi_results$cluster_size_df %>%
+  dplyr::group_by(total, trans_type)%>%
+  dplyr::count()
+
+# plot of the clusters
+own_cols <- c("red",  "blue", "purple")
+own_labels <- c("Group 1",  "Group 2", "Mixed")
+
+
+gg_res_1 <- ggplot(cluster_counts, aes(x = total, y = n, fill = trans_type))  +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = own_cols, name = "Transmission type",
+                   labels = own_labels) +
+  theme_classic() +
+  theme(axis.title.x = element_text(size=12, face="plain"),
+        axis.title.y = element_text(size=12, face="plain"),
+        axis.text.x  = element_text(size = 12, face = "plain"),
+        axis.text.y = element_text(size = 12, face = "plain"),
+        axis.ticks.length = unit(.2, "cm"),
+        legend.text = element_text(size = 12, face = "plain"),
+        legend.title = element_text(size = 12, face = "plain"),
+        legend.position = c(0.8,0.7)) +
+  scale_x_continuous(breaks = c(2,3,4,5,6,7,8,9), labels = c(2,3,4,5,6,7,8,9)) +
+  labs(title = "A", y = "Number of clusters", x = "Size of cluster")
+
+gg_res_1
+
+
+```
+
+
+```{r using manual cut-offs}
+
+
+#specify the temporal cut-off values (already specified spatial cut-offs above)
+manual_temporal_cut_off <- set_cutoff("temporal",150,180,240)
+
+
+vimes_multi_results_manual <- vimes_multi(
+    dat_time = dat_times,
+    dat_geo1 = dat_geo1,
+    dat_geo2 = dat_geo2,
+    temporal_cut_offs = manual_temporal_cut_off,
+    distance_cut_offs = manual_spatial_cut_off,
+    group_vect = group_vect,
+    graph_opt = vimes::vimes_graph_opt())
+```
+
+
+```{r histogram manual results}
+
+hist(vimes_multi_results_manual$vimes_results_list$clusters$size, col = "turquoise", xlab = "Size of cluster",
+     breaks = seq(-1,10,1),
+     main = "Histogram of cluster sizes using manual cut-off values")
+
+```
+
+The assortativity parameter sets the degree of assortative mixing. In the example above, we have set it to 1, which reflects random mixing. Higher values will reflect more assortative mixing. There is not a set range for this value and users may wish to trial a range of values to see which reflects there situation best. The level of mixing may be explored using the proportions of each type of transmission that are produced in the simulation and outputted by the get_quantiles_multi function. 
+
+```{r explore assortativity}
+
+
+temporal_cut_off_assort3 <- get_quantiles_multi(d_type = "temporal", distrib = "lognormal",
+                     obs = c(g1_obs, g2_obs), rr = c(g1_rr, g2_rr),
+                     params = params_temporal,
+                     n = n, q = q, assort_mix = 3)
+
+
+spatial_cut_off_assort3 <- get_quantiles_multi(d_type = "spatial", distrib = "rayleigh",
+                                                obs = c(g1_obs, g2_obs), rr = c(g1_rr, g2_rr),
+                                                params = params_spatial,
+                                                n = n, q = q, assort_mix = 3)
+
+
+```
+
+
+The differences in the parameter values and proportions between the random mixing scenario (assortativity parameter = 1) and that with assortativity parameter = 3 are shown below. You can see that the level of 'mixed' transmissions (between-group transmission) is higher when the assortativity parameter is set at a higher value
+
+```{r differences in assortativity}
+
+temporal_cut_off
+temporal_cut_off_assort3
+
+spatial_cut_off
+spatial_cut_off_assort3
+
+```
+
+
+Changes in the cut-off values that occur as a result of changes to the assortativity parameter will affect the composition of clusters.
+If we rerun the script above with the new values we produced the clusters shown below. The size of the largest cluster has increased from 9 to 10 and there is a change to the composition of the clusters of 2. 
+
+```{r clusters with assortativity 3, echo=FALSE}
+
+vimes_multi_results_assort3 <- vimes_multi(
+    dat_time = dat_times,
+    dat_geo1 = dat_geo1,
+    dat_geo2 = dat_geo2,
+    temporal_cut_offs = temporal_cut_off_assort3,
+    distance_cut_offs = spatial_cut_off_assort3,
+    group_vect = group_vect,
+    graph_opt = vimes::vimes_graph_opt())
+
+
+vimes_multi_results_assort3$cluster_size_df
+
+#extract the cluster details
+cluster_counts_assort3 <- vimes_multi_results_assort3$cluster_size_df %>%
+  dplyr::group_by(total, trans_type)%>%
+  dplyr::count()
+
+
+gg_res_3 <- ggplot(cluster_counts_assort3, aes(x = total, y = n, fill = trans_type))  +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = own_cols, name = "Transmission type",
+                   labels = own_labels) +
+  theme_classic() +
+  theme(axis.title.x = element_text(size=12, face="plain"),
+        axis.title.y = element_text(size=12, face="plain"),
+        axis.text.x  = element_text(size = 12, face = "plain"),
+        axis.text.y = element_text(size = 12, face = "plain"),
+        axis.ticks.length = unit(.2, "cm"),
+        legend.text = element_text(size = 12, face = "plain"),
+        legend.title = element_text(size = 12, face = "plain"),
+        legend.position = c(0.8,0.7)) +
+  scale_x_continuous(breaks = c(2,3,4,5,6,7,8,9,10), labels = c(2,3,4,5,6,7,8,9,10)) +
+  labs(title = "A", y = "Number of clusters", x = "Size of cluster")
+
+gg_res_3
+
+```
