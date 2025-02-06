@@ -3,8 +3,8 @@ title: "vimesMulti vignette"
 author: "Sarah Hayes"
 date: "2024-06-21"
 output:
-  word_document: default
   html_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -21,12 +21,10 @@ Load the package
 
 ```{r load package, message = FALSE, warning= FALSE}
 
-# This will change when package is hosted somewhere else
-
-library(devtools)
-load_all()
+devtools::install_github("sarahhayes/vimesMulti",build = TRUE)
+library(vimesMulti)
 library(ggplot2)
-
+library(tidyverse)
 ```
 
 The cluster detection method relies on cut-off values for pruning the graphs (for full details see....)
@@ -50,11 +48,12 @@ The user enters:
 
 * The summary statistics (mean and standard deviation) for the data. These may be the same for all transmission types or may vary by transmission types. 
 
-* Parameter vector (params_temporal). In this vector, the summary statistics for each of the transmission types are assigned in the order of: transmission between members of group 1 (g1-g1), transmission between groups 1 and 2 (g1-g2 or g2-g1), transmission between members of group 2 (g2-g2).In the example below,  
+* Parameter vector (params_temporal). In this vector, the summary statistics for each of the transmission types are assigned in the order of: transmission between members of group 1 (g1-g1), transmission between groups 1 and 2 (g1-g2 or g2-g1), transmission between members of group 2 (g2-g2). Summary statistics for spatial data should be entered in kilometres.  
 
-* Assortativity parameter (assort_mix). This parameter assigns the degree of assortative mixing between groups. At 1, this assumes random mixing. As it increases, the level of assortative mixing increases. 
+* Assortativity parameter (assort_mix). This parameter assigns the degree of assortative transmission between groups. At 1, this assumes random transmission. As the assortativity parameter increases, the level of assortative transmission increases. 
 
-Example of generating cut-off values for temporal data using the lognormal distribution
+Example of generating cut-off values for temporal data using the lognormal distribution 
+
 
 ```{r using get_quantiles_multi for temporal}
 
@@ -78,7 +77,7 @@ temporal_cut_off <- get_quantiles_multi(d_type = "temporal", distrib = "lognorma
 
 
 Example of generating cut-off values for spatial data using the Rayleigh distribution. 
-The Rayleigh distribution is a one-parameter distribution and so only the mean of the transmission distance is entered and NA entered for the standard distribution
+The Rayleigh distribution is a one-parameter distribution and so only the mean of the transmission distance is entered and NA entered for the standard deviation. Distances should be entered in kilometres. 
 
 
 ```{r using get_quantiles_multi for spatial data}
@@ -101,9 +100,9 @@ spatial_cut_off
 ```
 
 
-Alternatively, if the user already has the values they wish to use for the cut-off values, they can be manually specified using "set_cut_off". 
+Alternatively, if the user already has the values they wish to use for the cut-off values, they can be manually specified using *set_cut_off*. 
+When manually entering spatial cut-off values, these should be entered in kilometres. 
 
-** Perhaps remove the proportion_sim_spatial part of the table in the function?? 
 
 ```{r using set cut_off}
 
@@ -119,24 +118,11 @@ Generate some example data
 
 ```{r generate some data}
 
-dat_times <- c(1855, 1196, 711, 777, 780, 1332, 740, 1251, 1234, 804, 1789, 222, 345, 314, 465, 209, 253, 656,
-                1621, 455, 439, 439, 1414, 253, 896, 921, 410, 537, 954, 896, 980, 642, 119, 412, 413, 401, 401,
-                399, 398, 395, 398, 1321, 944, 709, 776, 769, 1067, 1261, 1534, 330)
+dat_times <- c(1855, 1196, 711, 777, 780, 1332, 740, 1251, 1234, 804, 1789, 222, 345, 314, 465, 209, 253, 656, 1621, 455, 439, 439, 1414, 253, 896, 921, 410, 537, 954, 896, 980, 642, 119, 412, 413, 401, 401, 399, 398, 395, 398, 1321, 944, 709, 776, 769, 1067, 1261, 1534, 330)
 
-dat_geo1 <- c(623626.8, 627471.6, 625338.6, 631570.6, 629642.1, 629805.5, 626784.1, 618404.2,
-                            617202.1, 591642.1, 600856.2, 590948.1, 576259.7, 576802.9, 578319.8, 585333.7,
-                            585286.0, 604260.9, 612423.8, 607130.3, 607068.2, 603192.5, 583602.8, 577951.7,
-                            604808.5, 604798.9, 603662.1, 592264.8, 586373.1, 580764.4, 586428.5, 585508.1,
-                            585520.0, 584640.1, 584640.1, 584640.1, 584640.1, 584640.1, 584640.1, 585215.0,
-                            584640.1, 631706.5, 631875.6, 629265.6, 629382.1, 628769.7, 629680.1, 644871.1,
-                            644841.1, 640511.1)
+dat_geo1 <- c(623626.8, 627471.6, 625338.6, 631570.6, 629642.1, 629805.5, 626784.1, 618404.2, 617202.1, 591642.1, 600856.2, 590948.1, 576259.7, 576802.9, 578319.8, 585333.7, 585286.0, 604260.9, 612423.8, 607130.3, 607068.2, 603192.5, 583602.8, 577951.7, 604808.5, 604798.9, 603662.1, 592264.8, 586373.1, 580764.4, 586428.5, 585508.1, 585520.0, 584640.1, 584640.1, 584640.1, 584640.1, 584640.1, 584640.1, 585215.0, 584640.1, 631706.5, 631875.6, 629265.6, 629382.1, 628769.7, 629680.1, 644871.1, 644841.1, 640511.1)
 
-dat_geo2 <- c(8850794, 8864207, 8861898, 8862102, 8854782, 8864586, 8853986, 8858298, 8855642,
-                             8860179, 8866007, 8860162, 8852528, 8853027, 8855598, 8855781, 8855480, 8868075,
-                             8854970, 8848923, 8849040, 8843570, 8853303, 8847845, 8845847, 8845835, 8843812,
-                             8840340, 8838607, 8833568, 8838656, 8842167, 8842038, 8841850, 8841850, 8841850,
-                             8841850, 8841850, 8841850, 8842443, 8841850, 8849402, 8849364, 8851496, 8850060,
-                             8849636, 8847645, 8842940, 8842928, 8850822)
+dat_geo2 <- c(8850794, 8864207, 8861898, 8862102, 8854782, 8864586, 8853986, 8858298, 8855642, 8860179, 8866007, 8860162, 8852528, 8853027, 8855598, 8855781, 8855480, 8868075, 8854970, 8848923, 8849040, 8843570, 8853303, 8847845, 8845847, 8845835, 8843812, 8840340, 8838607, 8833568, 8838656, 8842167, 8842038, 8841850, 8841850, 8841850, 8841850, 8841850, 8841850, 8842443, 8841850, 8849402, 8849364, 8851496, 8850060, 8849636, 8847645, 8842940, 8842928, 8850822)
 
 # Also need a vector specifying the group for each data entry
 set.seed(26)
@@ -145,7 +131,15 @@ group_vect <- sample(c(rep("g1", 30), rep("g2", 20)))
 ```
 
 
-Use the vimes_multi function to generate the clusters
+Use the *vimes_multi* function to generate the clusters. 
+The user will input:
+* The temporal data (dat_time) for each case. This should be entered as a numeric to allow computation of the distance matrix. Unit does not need to be specified but must be the same for all entries.  
+
+* The spatial data (dat_geo_1 and dat_geo_2) for each case. The package uses *rdist* from the fields package to calculate euclidean distance, thus locations should be entered in Universtal Transverse Mercator to ensure the calculated distance matrix is in metres. This is then converted to kilometres within the function.
+
+* The temporal and spatial cut-off values that have either been generated using *get_quantiles_multi* or *set_cutoff*
+
+* A vector specifying which group each case belongs to 
 
 
 ```{r generate the clusters using cut-off values from get_quantiles_multi}
@@ -181,8 +175,10 @@ Histogram to show the cluster sizes
 ```{r histogram of results}
 
 hist(vimes_multi_results$vimes_results_list$clusters$size, col = "pink", xlab = "Size of cluster",
-     breaks = seq(-1,10,1),
-     main = "Histogram of cluster sizes")
+     xaxt = "n",
+     breaks = seq(0,max(vimes_multi_results$vimes_results_list$clusters$size),1),
+     main = "Counts of clusters of each size")
+axis(side = 1, at = seq(0.5,max(vimes_multi_results$vimes_results_list$clusters$size)-0.5),labels = seq(1,max(vimes_multi_results$vimes_results_list$clusters$size)))
 
 ```
 
@@ -223,6 +219,9 @@ gg_res_1
 ```
 
 
+The same process can also be undertaken using the user-defined cut-off values.
+
+
 ```{r using manual cut-offs}
 
 
@@ -244,12 +243,15 @@ vimes_multi_results_manual <- vimes_multi(
 ```{r histogram manual results}
 
 hist(vimes_multi_results_manual$vimes_results_list$clusters$size, col = "turquoise", xlab = "Size of cluster",
-     breaks = seq(-1,10,1),
-     main = "Histogram of cluster sizes using manual cut-off values")
+     breaks = seq(0,max(vimes_multi_results_manual$vimes_results_list$clusters$size),1),
+     xaxt = "n",
+     main = "Plot of cluster sizes using manual cut-off values")
+axis(side = 1, at = seq(0.5,max(vimes_multi_results_manual$vimes_results_list$clusters$size)-0.5),labels = seq(1,max(vimes_multi_results_manual$vimes_results_list$clusters$size)))
+
 
 ```
 
-The assortativity parameter sets the degree of assortative mixing. In the example above, we have set it to 1, which reflects random mixing. Higher values will reflect more assortative mixing. There is not a set range for this value and users may wish to trial a range of values to see which reflects there situation best. The level of mixing may be explored using the proportions of each type of transmission that are produced in the simulation and outputted by the get_quantiles_multi function. 
+The assortativity parameter sets the degree of assortative transmission. In the example above, we have set it to 1, which reflects random transmission between groups. Higher values will reflect more assortative transmission. 
 
 ```{r explore assortativity}
 
@@ -269,7 +271,7 @@ spatial_cut_off_assort3 <- get_quantiles_multi(d_type = "spatial", distrib = "ra
 ```
 
 
-The differences in the parameter values and proportions between the random mixing scenario (assortativity parameter = 1) and that with assortativity parameter = 3 are shown below. You can see that the level of 'mixed' transmissions (between-group transmission) is higher when the assortativity parameter is set at a higher value
+The differences in the parameter values and proportions between the random mixing scenario (assortativity parameter = 1) and that with assortativity parameter = 3 are shown below. You can see that the level of 'mixed' transmissions (between-group transmission) is lower when the assortativity parameter is set at a higher value
 
 ```{r differences in assortativity}
 
@@ -322,5 +324,15 @@ gg_res_3 <- ggplot(cluster_counts_assort3, aes(x = total, y = n, fill = trans_ty
   labs(title = "A", y = "Number of clusters", x = "Size of cluster")
 
 gg_res_3
+
+```
+
+There is not a set range for the value of the assortativity parameter and users may wish to trial a range of values to see which reflects their data best. This can be assessed using the Chi-squared goodness-of-fit test. Calculation of the Chi-squared test statistic is shown below. An application of this method to a dataset can be seen in: *add reference to paper here*
+
+```{r chi-squared}
+
+combined_results <- vimes_multi_results$combined_results
+chisq_val <- sum((combined_results$data_count - combined_results$sim_count)^2/combined_results$sim_count)
+chisq_val
 
 ```

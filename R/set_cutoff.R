@@ -1,7 +1,7 @@
 
-#' Generate dataframe for use in vimes_multi when user specifying thresholds
+#' Generate dataframe for use in vimes_multi when user is specifying thresholds
 #'
-#' @param d_type one of 'temporal' or 'spatial'
+#' @param d_type one of 'temporal' or 'spatial'. If using spatial, values should be entered in kilometres.
 #' @param g1g1_threshold cutoff distance for group 1 to group 1 transmission
 #' @param mixed_threshold cutoff distance for mixed transmission
 #' @param g2g2_threshold cutoff distance for group 2 to group 2 transmission
