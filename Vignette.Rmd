@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE, message  = FALSE)
 
 ## vimesMulti
 
-vimesMulti is a package for detecting disease outbreak clusters from temporal and spatial suveillance data using group-specific epidemiological parameters.
+vimesMulti is a package for detecting disease outbreak clusters from temporal and spatial surveillance data using group-specific epidemiological parameters.
 There are four basic functions within the package. 
 This vignette illustrates a basic workflow.
 
