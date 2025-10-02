@@ -133,6 +133,7 @@ group_vect <- sample(c(rep("g1", 30), rep("g2", 20)))
 
 Use the *vimes_multi* function to generate the clusters. 
 The user will input:
+
 * The temporal data (dat_time) for each case. This should be entered as a numeric to allow computation of the distance matrix. Unit does not need to be specified but must be the same for all entries.  
 
 * The spatial data (dat_geo_1 and dat_geo_2) for each case. The package uses *rdist* from the fields package to calculate euclidean distance, thus locations should be entered in Universtal Transverse Mercator to ensure the calculated distance matrix is in metres. This is then converted to kilometres within the function.
