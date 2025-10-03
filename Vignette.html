@@ -395,22 +395,24 @@ package. This vignette illustrates a basic workflow.</p>
 ## package &#39;igraph&#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\hayes\AppData\Local\Temp\Rtmp88tnbF\downloaded_packages
+##  C:\Users\hayes\AppData\Local\Temp\Rtmpmo5BWt\downloaded_packages
 ## ── R CMD build ─────────────────────────────────────────────────────────────────
 ##   
   
   
-   checking for file &#39;C:\Users\hayes\AppData\Local\Temp\Rtmp88tnbF\remotes211866650d8\sarahhayes-vimesMulti-a0269d8/DESCRIPTION&#39; ...
+   checking for file &#39;C:\Users\hayes\AppData\Local\Temp\Rtmpmo5BWt\remotes45c420219a7\sarahhayes-vimesMulti-7dd4c3b/DESCRIPTION&#39; ...
   
-   checking for file &#39;C:\Users\hayes\AppData\Local\Temp\Rtmp88tnbF\remotes211866650d8\sarahhayes-vimesMulti-a0269d8/DESCRIPTION&#39; ... 
+   checking for file &#39;C:\Users\hayes\AppData\Local\Temp\Rtmpmo5BWt\remotes45c420219a7\sarahhayes-vimesMulti-7dd4c3b/DESCRIPTION&#39; ... 
   
-✔  checking for file &#39;C:\Users\hayes\AppData\Local\Temp\Rtmp88tnbF\remotes211866650d8\sarahhayes-vimesMulti-a0269d8/DESCRIPTION&#39; (693ms)
+✔  checking for file &#39;C:\Users\hayes\AppData\Local\Temp\Rtmpmo5BWt\remotes45c420219a7\sarahhayes-vimesMulti-7dd4c3b/DESCRIPTION&#39; (436ms)
 ## 
   
   
   
 ─  preparing &#39;vimesMulti&#39;:
 ##    checking DESCRIPTION meta-information ...
+  
+   checking DESCRIPTION meta-information ... 
   
 ✔  checking DESCRIPTION meta-information
 ## 
@@ -501,9 +503,9 @@ spatial_cut_off &lt;- get_quantiles_multi(d_type = &quot;spatial&quot;, distrib 
 
 spatial_cut_off</code></pre>
 <pre><code>##   trans_type threshold_spatial proportion_sim_spatial
-## 1       g1g1          2.273581              0.3597698
-## 2      mixed          2.271280              0.4803126
-## 3       g2g2          2.273483              0.1599176</code></pre>
+## 1       g1g1          2.272687              0.3598654
+## 2      mixed          2.269915              0.4801969
+## 3       g2g2          2.273070              0.1599377</code></pre>
 <p>Alternatively, if the user already has the values they wish to use
 for the cut-off values, they can be manually specified using
 <em>set_cut_off</em>. When manually entering spatial cut-off values,
@@ -556,9 +558,9 @@ generated using <em>get_quantiles_multi</em> or
 type from the data clusters and from the original simulation</p>
 <pre class="r"><code>vimes_multi_results$combined_results</code></pre>
 <pre><code>##   trans_type sim_proportion data_count data_proportion sim_count
-## 1       g1g1      0.3598895         18       0.4615385        14
-## 2      mixed      0.4801440         16       0.4102564        19
-## 3       g2g2      0.1599665          5       0.1282051         6</code></pre>
+## 1       g1g1       0.359886         18       0.4615385        14
+## 2      mixed       0.480076         16       0.4102564        19
+## 3       g2g2       0.160038          5       0.1282051         6</code></pre>
 <p>Summary table of size and composition of clusters of two or more.</p>
 <pre class="r"><code>vimes_multi_results$cluster_size_df</code></pre>
 <pre><code>## # A tibble: 8 × 5
@@ -649,9 +651,9 @@ of ‘mixed’ transmissions (between-group transmission) is lower when the
 assortativity parameter is set at a higher value</p>
 <pre class="r"><code>temporal_cut_off</code></pre>
 <pre><code>##   trans_type threshold_temporal proportion_sim_temporal
-## 1       g1g1           157.0472               0.3600093
-## 2      mixed           186.3466               0.4799754
-## 3       g2g2           246.5927               0.1600153</code></pre>
+## 1       g1g1           157.0460               0.3599065
+## 2      mixed           186.5752               0.4799552
+## 3       g2g2           246.1366               0.1601383</code></pre>
 <pre class="r"><code>temporal_cut_off_assort3</code></pre>
 <pre><code>##   trans_type threshold_temporal proportion_sim_temporal
 ## 1       g1g1           126.5646               0.5135088
@@ -659,9 +661,9 @@ assortativity parameter is set at a higher value</p>
 ## 3       g2g2           334.9332               0.3132963</code></pre>
 <pre class="r"><code>spatial_cut_off</code></pre>
 <pre><code>##   trans_type threshold_spatial proportion_sim_spatial
-## 1       g1g1          2.273581              0.3597698
-## 2      mixed          2.271280              0.4803126
-## 3       g2g2          2.273483              0.1599176</code></pre>
+## 1       g1g1          2.272687              0.3598654
+## 2      mixed          2.269915              0.4801969
+## 3       g2g2          2.273070              0.1599377</code></pre>
 <pre class="r"><code>spatial_cut_off_assort3</code></pre>
 <pre><code>##   trans_type threshold_spatial proportion_sim_spatial
 ## 1       g1g1          2.083237              0.5135143
