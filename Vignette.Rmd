@@ -252,7 +252,7 @@ axis(side = 1, at = seq(0.5,max(vimes_multi_results_manual$vimes_results_list$cl
 
 ```
 
-The assortativity parameter sets the degree of assortative transmission. In the example above, we have set it to 1, which reflects random transmission between groups. Higher values will reflect more assortative transmission. 
+The assortativity parameter sets the degree of assortative transmission. In the example above, we have set it to 1, which reflects random transmission between groups. Higher values will reflect more assortative transmission. There is no upper limit for the assortativity parameter set within the package. Thus, when the level of assortative transmission in unknown, the user may wish to enter a range of values for the assortativity parameter and assess the clusters produced to evaluate which values generate estimates most consistent with their data. 
 
 ```{r explore assortativity}
 
@@ -286,7 +286,7 @@ spatial_cut_off_assort3
 
 
 Changes in the cut-off values that occur as a result of changes to the assortativity parameter will affect the composition of clusters.
-If we rerun the script above with the new values we produced the clusters shown below. The size of the largest cluster has increased from 9 to 10 and there is a change to the composition of the clusters of 2. 
+If we rerun the script above with the new values we produce the clusters shown below. The size of the largest cluster has increased from 9 to 10 and there is a change to the composition of the clusters of 2. 
 
 ```{r clusters with assortativity 3, echo=FALSE}
 
